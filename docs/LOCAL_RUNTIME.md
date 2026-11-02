@@ -21,7 +21,7 @@ The selected binary's help confirms router presets, maximum loaded models, offli
 | `recast-gemma` | `models/gemma-4-26B-A4B-it-UD-Q6_K_XL.gguf` | 21.70 GiB |
 | `recast-sage` | `models/Sage-A1.5-Q4_K_M.gguf` | 20.22 GiB |
 
-The [preset](../config/models.ini) supplies exactly five named entries. The [launcher](../scripts/start-router.ps1) accepts at most five explicit model paths and uses an isolated project cache and no `--models-dir`, preventing discovery of unrelated shared models. Keep the project cache free of downloaded models: presets are not themselves a filter over llama.cpp's default cache discovery.
+The [preset](../config/models.ini) supplies exactly five named entries. The [launcher](../scripts/launch.py) accepts at most five explicit model paths and uses an isolated project cache and no `--models-dir`, preventing discovery of unrelated shared models. Keep the project cache free of downloaded models: presets are not themselves a filter over llama.cpp's default cache discovery.
 
 Gemma's local metadata identifies the 26B A4B instruction-tuned `gemma4` MoE. Sage's local architecture is `qwen35moe`; it is the Qwen-family 35B/A3B-class fine-tuned candidate described in [research](RESEARCH.md), not a small generic model. Leave both vision projectors unloaded for this text-only application. Both larger files require distributed VRAM on this dual-16-GB machine at these settings; the active-expert parameter count is not their weight-memory requirement.
 
@@ -31,15 +31,15 @@ These settings limit normal application resource use. They are not a sandbox or 
 
 ## Startup
 
-Use PowerShell 7:
+The launcher is a standard-library Python script that runs on Windows, Linux, and macOS:
 
-```powershell
-Set-Location <path-to-recast>
-pwsh -NoProfile -File .\scripts\start-router.ps1 -ValidateOnly
-pwsh -NoProfile -File .\scripts\start-router.ps1
+```sh
+cd <path-to-recast>
+python scripts/launch.py router --validate-only
+python scripts/launch.py router
 ```
 
-`-ValidateOnly` checks the executable/preset/model paths without loading weights. It does not prove model compatibility or inference quality. Override the executable with `-ServerPath` or choose a different port with `-Port` if needed.
+`--validate-only` checks the executable/preset/model paths without loading weights. It does not prove model compatibility or inference quality. Override the executable with `--server-path` or choose a different port with `--router-port` if needed.
 
 The launcher runs in the foreground. Stop it with Ctrl+C. It configures the child process environment without changing global settings or the calling shell's environment. When replacing the executable, repeat all runtime checks.
 

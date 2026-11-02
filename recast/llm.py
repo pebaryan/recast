@@ -94,7 +94,7 @@ class LocalModel:
             return json.loads(raw)
         except (OSError, http.client.HTTPException, ValueError) as exc:
             self.check_cancelled()
-            raise ModelError(f"Cannot use llama.cpp at {self.host}:{self.port}. Start scripts/start-router.ps1. {exc}") from exc
+            raise ModelError(f"Cannot use llama.cpp at {self.host}:{self.port}. Run `python scripts/launch.py router`. {exc}") from exc
         finally:
             connection.close()
             with self.lock:

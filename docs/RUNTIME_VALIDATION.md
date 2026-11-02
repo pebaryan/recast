@@ -6,13 +6,13 @@ Date: 2026-10-25. Scope: runtime compatibility and basic structured generation, 
 
 The initial record below used the original three-model preset. The Gemma/Sage addendum records validation of the expanded five-model preset.
 
-Executable: `models/llama-b10837-bin-win-cuda-13.3-x64\llama-server.exe`.
+Executable: llama.cpp `llama-server`, build 10837 (path set via `RECAST_LLAMA_SERVER`).
 
 Reported version: `0.4.0-dev`, build `10837`, commit `5202104b5`.
 
 Executable SHA-256: `4ECE83D6180FDACDEE2D6A67E5AD49B71241AE3E56C9CDF3804C9FBD944B0623`.
 
-Two RTX 5060 Ti GPUs, each with 16,311 MiB VRAM. Used [models.ini](../config/models.ini) and [start-router.ps1](../scripts/start-router.ps1), loopback port 8017, isolated cache, offline operation, 16,384-token contexts, one inference slot, and one resident model maximum.
+Two RTX 5060 Ti GPUs, each with 16,311 MiB VRAM. Used [models.ini](../config/models.ini) and the router launcher ([launch.py](../scripts/launch.py), originally a PowerShell script), loopback port 8017, isolated cache, offline operation, 16,384-token contexts, one inference slot, and one resident model maximum.
 
 ## Checks performed
 

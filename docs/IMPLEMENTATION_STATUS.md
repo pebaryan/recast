@@ -4,7 +4,7 @@ Date: 2026-10-25.
 
 ## Working application
 
-Run `pwsh -NoProfile -File scripts/start-app.ps1` from the project folder, then open `http://127.0.0.1:8020`. A CLI is available through `python -m recast`. Python 3.10+ runs the checkout without third-party Python packages or a frontend build. PDF text extraction uses the installed Poppler `pdftotext`, with optional `pypdf` fallback.
+Run `python scripts/launch.py start` from the project folder, then open `http://127.0.0.1:8020`. A CLI is available through `python -m recast`. Python 3.10+ runs the checkout without third-party Python packages or a frontend build. PDF text extraction uses the installed Poppler `pdftotext`, with optional `pypdf` fallback.
 
 Implemented:
 

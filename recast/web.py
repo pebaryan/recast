@@ -140,7 +140,7 @@ def handler_for(store, jobs):
                         states = {item["id"]: item.get("status", {}).get("value", "unknown") for item in remote["data"]}
                         return self._send(200, {"available": True, "models": [{"id": entry["id"], "label": entry["label"], "state": states.get(entry["id"], "unavailable")} for entry in entries]})
                     except Exception:
-                        return self._send(200, {"available": False, "models": [{"id": entry["id"], "label": entry["label"]} for entry in entries], "message": "Start scripts/start-router.ps1 to connect the local models."})
+                        return self._send(200, {"available": False, "models": [{"id": entry["id"], "label": entry["label"]} for entry in entries], "message": "Run `python scripts/launch.py router` to connect the local models."})
                 match = re.fullmatch(r"/api/jobs/([a-f0-9]{32})(/download)?", parsed.path)
                 if match:
                     job_id = match.group(1)

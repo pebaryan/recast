@@ -17,16 +17,18 @@ A working local browser app and CLI are implemented, with reference extraction, 
 
 ## Run the app
 
-Requires Python 3.10+, PowerShell 7, and a llama.cpp `llama-server` binary plus the model files named in `config/models.ini`. Set `RECAST_LLAMA_SERVER` to the `llama-server.exe` path (or pass `-ServerPath` to the scripts); the scripts otherwise look for `llama-server` on PATH. Put your GGUF files (or symlinks) under `models/` using the file names in `config/models.ini`. No additional Python packages, Node installation, or frontend build are required to run from this checkout. PDF references use the installed `pdftotext`; set `RECAST_PDFTOTEXT` if it is not on PATH. An installed `pypdf` is an optional fallback.
+Requires Python 3.10+ (Windows, Linux, or macOS), a llama.cpp `llama-server` binary, and the model files named in `config/models.ini`. Set `RECAST_LLAMA_SERVER` to the `llama-server` path (or pass `--server-path` to the launcher); the launcher otherwise look for `llama-server` on PATH. Put your GGUF files (or symlinks) under `models/` using the file names in `config/models.ini`. No additional Python packages, Node installation, or frontend build are required to run from this checkout. PDF references use the installed `pdftotext`; set `RECAST_PDFTOTEXT` if it is not on PATH. An installed `pypdf` is an optional fallback.
 
-```powershell
-Set-Location <checkout-directory>
-pwsh -NoProfile -File .\scripts\start-app.ps1
+```sh
+cd <checkout-directory>
+python scripts/launch.py start
 ```
 
-Open **http://127.0.0.1:8020**. The script starts the router if necessary, then runs the app. Ctrl+C stops the app and a router it started itself. An already running router is reused and left running.
+The GPU settings in `config/models.ini` (`n-gpu-layers`, `tensor-split`, `split-mode`) are tuned for a dual-16-GB-GPU machine; adjust them for your hardware (for example, remove `tensor-split` on a single GPU). The launcher is tested on Windows and Linux; macOS uses the same code paths but is untested.
 
-From a separate terminal, `pwsh -NoProfile -File scripts/stop-app.ps1` also stops the managed app. It checks the recorded process identity before stopping its process tree. Completed sections remain saved for resuming interrupted jobs.
+Open **http://127.0.0.1:8020**. The launcher starts the router if necessary, then runs the app. Ctrl+C stops the app and a router it started itself. An already running router is reused and left running.
+
+From a separate terminal, `python scripts/launch.py stop` also stops the managed app. It checks the recorded process identity before stopping its process tree. Completed sections remain saved for resuming interrupted jobs.
 
 1. Paste or upload content A as `.txt`, `.md` / `.markdown`, or `.tex` / `.latex`.
 2. Upload reference B as `.docx` or a PDF with extractable text. TXT/Markdown references also work.
@@ -74,12 +76,10 @@ Node is only needed for the optional JavaScript syntax check. Automated tests co
 
 ## Start the local router
 
-From PowerShell 7:
-
-```powershell
-Set-Location <checkout-directory>
-pwsh -NoProfile -File .\scripts\start-router.ps1 -ValidateOnly
-pwsh -NoProfile -File .\scripts\start-router.ps1
+```sh
+cd <checkout-directory>
+python scripts/launch.py router --validate-only
+python scripts/launch.py router
 ```
 
 The router binds to `127.0.0.1:8017`, advertises five explicitly configured models, and permits one loaded model at a time. Startup does not load model weights. See the runtime document for requests and resource limits.
