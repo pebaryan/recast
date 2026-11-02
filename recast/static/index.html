@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Recast — change the voice, keep the meaning</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/diff.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="wordmark" href="/" aria-label="Recast home">recast<span class="wordmark-dot">.</span></a>
+    <p>The content of one document.<br>The writing style of another.</p>
+    <div class="connection"><span id="connection-dot" class="connection-dot"></span><span id="connection-text">Checking local models…</span></div>
+  </header>
+  <main>
+    <nav class="stages" aria-label="Workflow"><span id="step-documents" aria-current="step">Documents</span><span id="step-style">Style</span><span id="step-rewrite">Rewrite</span></nav>
+    <div id="error" class="notice error" role="alert" hidden></div>
+    <section id="inputs" aria-labelledby="documents-heading">
+      <div class="section-heading"><div><h1 id="documents-heading">Give your words another voice.</h1><p>Keep the ideas, facts, and qualifications. Borrow the way they are expressed.</p></div></div>
+      <div class="documents-grid">
+        <section class="source-pane" aria-labelledby="source-heading">
+          <div class="pane-title"><div><span class="document-letter">A</span><h2 id="source-heading">Your content</h2></div><label class="file-button">Open a file<input id="source-file" type="file" accept=".txt,.md,.markdown,.tex,.latex"></label></div>
+          <div class="editor-toolbar"><label for="source-format">Format</label><select id="source-format"><option value=".txt">Plain text</option><option value=".md">Markdown</option><option value=".tex">LaTeX</option></select><span id="source-name">Or paste below</span></div>
+          <label class="sr-only" for="source-text">Source document text</label><textarea id="source-text" class="source-editor" spellcheck="false" placeholder="Paste the text you want to rewrite…"></textarea>
+          <div class="editor-footer"><span id="word-count">0 words</span><span>Text, Markdown, or LaTeX · up to 4 MB</span></div>
+          <p class="format-note" id="format-note">Quotations, numbers, and citations are protected.</p>
+        </section>
+        <section class="reference-pane" aria-labelledby="reference-heading">
+          <div class="pane-title"><div><span class="document-letter reference-letter">B</span><h2 id="reference-heading">The voice to borrow</h2></div></div>
+          <label class="reference-picker" id="reference-picker" tabindex="0">
+            <span class="paper-icon" aria-hidden="true">B</span>
+            <strong id="reference-name">Choose a style reference</strong>
+            <span id="reference-description">A DOCX or PDF with the writing style you want.</span>
+            <span class="picker-link">Browse files</span>
+            <input id="reference-file" type="file" accept=".docx,.pdf,.txt,.md,.markdown">
+          </label>
+          <p class="reference-explanation">We read the writing, rather than the page design. A few pages of consistent prose work well.</p>
+          <details id="reference-preview-wrap" hidden><summary>Review extracted reference text</summary><pre id="reference-preview" class="reference-preview"></pre></details>
+          <p class="small">Scanned PDFs need a text layer. TXT and Markdown references also work.</p>
+        </section>
+      </div>
+      <div class="controls-row">
+        <label class="control-label" for="model">Local model<select id="model"><option value="recast-default">Qwen 3.5 · 9B</option></select></label>
+        <label class="control-label" for="strength">Style strength<select id="strength"><option value="subtle">Subtle</option><option value="balanced" selected>Balanced</option><option value="strong">Strong</option></select></label>
+        <p class="control-note">Stronger style still preserves meaning.</p>
+        <button class="secondary" id="example-button" type="button">Try an example</button>
+        <button class="primary" id="analyze-button" type="button">Analyze the style</button>
+      </div>
+    </section>
+    <section id="progress-section" class="progress-section" aria-live="polite" hidden>
+      <div class="progress-top"><div><span class="working-mark" aria-hidden="true"></span><strong id="progress-label">Working…</strong><p id="progress-detail">A model may take a moment to load.</p></div><button class="secondary" id="cancel-button" type="button">Cancel</button></div>
+      <progress id="progress-bar" max="100" aria-label="Rewrite progress"></progress>
+    </section>
+    <section id="profile-section" class="profile-section" aria-labelledby="profile-heading" hidden>
+      <div class="section-heading"><div><h2 id="profile-heading">The style, in words.</h2><p>Review or adjust the direction before rewriting.</p></div><a id="download-profile" class="text-link" href="#">Save style profile</a></div>
+      <div class="profile-grid"><div><label class="control-label" for="profile-summary">Overall voice<textarea id="profile-summary" rows="3"></textarea></label><label class="control-label" for="profile-rules">Writing rules <span>One per line</span><textarea id="profile-rules" rows="6"></textarea></label><label class="control-label" for="profile-avoid">Patterns to avoid <span>One per line</span><textarea id="profile-avoid" rows="3"></textarea></label></div><div><h3>What we noticed</h3><div id="traits"></div></div></div>
+      <div id="warnings" class="reference-notes"></div>
+      <div class="profile-actions"><button class="primary" id="rewrite-button" type="button">Rewrite my document</button><span>Original syntax and protected content stay intact.</span></div>
+    </section>
+    <section id="result-section" aria-labelledby="result-heading" hidden>
+      <div class="section-heading"><div><h2 id="result-heading">A new voice. Your meaning.</h2><p id="result-status"></p></div><div class="result-actions"><button id="copy-button" class="secondary" type="button">Copy output</button><a id="download-output" class="button primary" href="#">Download document</a></div></div>
+      <div class="change-toolbar"><p><span class="change-key removed-key"></span>Original wording changed <span class="change-key added-key"></span>New wording</p><button id="changes-button" class="text-button" type="button" aria-pressed="true">Hide highlights</button></div>
+      <div class="comparison"><div><h3>Original</h3><pre id="original-output" tabindex="0"></pre></div><div><h3>Recast</h3><pre id="rewritten-output" tabindex="0"></pre></div></div>
+      <div class="review-heading"><h3>Preservation review</h3><a id="download-report" class="text-link" href="#">Download review</a></div>
+      <p class="small">Automated checks support your review; they cannot guarantee that every meaning is preserved.</p><div id="findings"></div>
+    </section>
+    <footer><p>Documents and inference stay on this machine.</p><button id="delete-button" class="text-button" type="button" hidden>Delete this local job</button><button id="new-button" class="text-button" type="button" hidden>Start a new document</button></footer>
+  </main>
+</body>
+</html>
